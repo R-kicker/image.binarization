@@ -1,5 +1,7 @@
 # image.binarization
 
+**This is a branch to add support of `SpatRaster` objects from `terra` package**
+ 
 This repository contains an R package for Binarizing Images focusing on local adaptive thresholding with the purpose of improving
 
 - Optical Character Recognition (OCR)
