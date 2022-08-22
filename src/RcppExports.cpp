@@ -5,6 +5,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // doxa_binary
 Rcpp::List doxa_binary(Rcpp::IntegerVector x, int height, int width, std::string type, Rcpp::List opts);
 RcppExport SEXP _image_binarization_doxa_binary(SEXP xSEXP, SEXP heightSEXP, SEXP widthSEXP, SEXP typeSEXP, SEXP optsSEXP) {

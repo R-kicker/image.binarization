@@ -69,19 +69,62 @@
 #' binary <- image_binarization(img, type = "isauvola", opts = list(window = 75L, k = 0.2))
 #' binary
 image_binarization <- function(x, type, opts = list()){
-    stopifnot(type %in% c("otsu", "bernsen", "niblack", "sauvola", "wolf", "nick", "gatos", "su", "trsingh", "bataineh", "wan", "isauvola"))
+  stopifnot(
+    type %in% c(
+      "otsu",
+      "bernsen",
+      "niblack",
+      "sauvola",
+      "wolf",
+      "nick",
+      "gatos",
+      "su",
+      "trsingh",
+      "bataineh",
+      "wan",
+      "isauvola"
+    )
+  )
+  # Prepare source data
+  type_img <- class(x)
+  if (type_img == "SpatRaster") {
+    nl <- terra::nlyr(x)
+    if (nl > 1L)
+      warning("Number of layers in raster > 1. Only 1st layer will be processed")
+    src_img <- list(
+      x = as.vector(terra::values(x[[1L]]),  mode = 'integer'),
+      w = terra::nrow(x),
+      h = terra::ncol(x)
+    )
+  } else {
     i <- magick::image_info(x)
-    if(nrow(i) > 1){
-        stop("works only on magick objects containing 1 image")
+    if (nrow(i) > 1) {
+      stop("works only on magick objects containing 1 image")
     }
-    width  <- i$width
-    height <- i$height
-    info   <- list(x = as.vector(magick::image_data(x, channel = "gray"), mode = 'integer'), width = width, height = height)
-    ## Apply
-    binary <- doxa_binary(info$x, width = info$width, height = info$height, type = type, opts = opts)
-    ## Get the results back into magick
-    img <- matrix(binary$x, ncol = binary$width, nrow = binary$height, byrow = TRUE)
-    img <- grDevices::as.raster(img, max = 255)
-    img <- magick::image_read(img)
-    img
+    src_img <- list(
+      x = as.vector(magick::image_data(x, channel = "gray"), mode = 'integer'),
+      w = i$width,
+      h = i$height
+    )
+  }
+  # Apply binarization
+  binary <- doxa_binary(
+    x = src_img$x,
+    width = src_img$w,
+    height = src_img$h,
+    type = type,
+    opts = opts
+  )
+  # Convert result
+  img <- with(binary, matrix(
+    data = x,
+    ncol = width,
+    nrow = height,
+    byrow = TRUE
+  ))
+  # Get the results back into magick or SpatRaster
+  if (type_img == "SpatRaster")
+    return(terra::rast(img))
+  else
+    return(magick::image_read(grDevices::as.raster(img, max = 255L)))
 }

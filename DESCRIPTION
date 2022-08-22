@@ -10,11 +10,12 @@ Authors@R: c(
 Description: Improve optical character recognition by binarizing images. The package focuses primarily on local adaptive thresholding algorithms. 
     In English, this means that it has the ability to turn a color or gray scale image into a black and white image. This is particularly useful
     as a preprocessing step for optical character recognition or handwritten text recognition.
+    Testing support of spatial rasters from 'terra' package.
 License: MPL-2.0
 URL: https://github.com/DIGI-VUB/image.binarization
 Encoding: UTF-8
 Depends: R (>= 4.0.0)
-Imports: Rcpp, magick, grDevices
+Imports: Rcpp, magick, terra
 LinkingTo: Rcpp
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.1
 SystemRequirements: C++17
