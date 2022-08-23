@@ -107,6 +107,13 @@ image_binarization <- function(x, type, opts = list()){
       h = i$height
     )
   }
+  # Rough convert to 8bit
+  imax <- max(src_img$x)
+  if (imax > 255) {
+    message("Input image data is not 8bit. Will be converted and scaled internally")
+    src_img$x <- round((src_img$x - min(src_img$x)) / imax * 255)
+    src_img$x <- as.integer(src_img$x)
+  }
   # Apply binarization
   binary <- doxa_binary(
     x = src_img$x,
