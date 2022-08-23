@@ -108,11 +108,12 @@ image_binarization <- function(x, type, opts = list()){
     )
   }
   # Rough convert to 8bit
-  imax <- max(src_img$x)
+  imax <- max(src_img$x, na.rm = TRUE) # Safe 'max' may return -Inf for all NA!
   if (imax > 255) {
     message("Input image data is not 8bit. Will be converted and scaled internally")
     src_img$x <- round((src_img$x - min(src_img$x)) / imax * 255)
     src_img$x <- as.integer(src_img$x)
+    # Need to check for NA before segmentation ?
   }
   # Apply binarization
   binary <- doxa_binary(
